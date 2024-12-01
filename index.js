@@ -87,21 +87,33 @@ async function run() {
 
         // Users Api
 
-        app.get("/users", async(req, res) => {
+        app.get("/users", async (req, res) => {
             const result = await userCollection.find().toArray();
             res.send(result);
         })
 
-        app.post("/users", async(req, res)=>{
+        app.post("/users", async (req, res) => {
             console.log(req.body);
             const result = await userCollection.insertOne(req.body);
             res.send(result);
         })
 
-        app.delete("/users/:id", async(req, res)=>{
+        app.patch("/users", async (req, res) => {
+            const email = req.body.email
+            const query = { email };
+            const updatedDoc = {
+                $set:{
+                    lastSignInTime: req.body?.lastSignInTime
+                }
+            }
+            const result = await userCollection.updateOne(query, updatedDoc);
+            res.send(result);
+        })
+
+        app.delete("/users/:id", async (req, res) => {
             // const id = req.params.id;
             // const query = {_id: new ObjectId(id)}
-            const query = {_id: new ObjectId(req.params.id)};
+            const query = { _id: new ObjectId(req.params.id) };
             const result = await userCollection.deleteOne(query);
             res.send(result);
         })
